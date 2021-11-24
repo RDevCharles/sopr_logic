@@ -32,12 +32,21 @@ def main():
         total_supply_req = requests.get(
             f'https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress={coin_address_res}&apikey={ETHERSCAN_APIKEY}')
         total_supply_res = total_supply_req.json()['result']
+
+        if 0 > coin_price_req[i]['usd_24h_volume'] / coin_price_req[i]['usd_24h_change']:
+            score_color = 'red'
+        elif 0.5 < coin_price_req[i]['usd_24h_volume'] / coin_price_req[i]['usd_24h_change']:
+            score_color = 'green'
+        else:
+            score_color = 'yellow'
+            score_color = 'yellow'
         ct = str(datetime.datetime.now())
         url: str = os.getenv("SUPABASE_URL")
         key: str = os.getenv("SUPABASE_SECRET_KEY")
         supabase: Client = create_client(url, key)
-        data = supabase.table("alts").insert({"name":i, "address" :coin_address_res, "info" : coin_price_req, "supply":total_supply_res, "gas" : gas_price_res, "timestamp":ct }).execute()
+        data = supabase.table("alts").insert({"name":i, "address" :coin_address_res, "info" : coin_price_req[i], "supply":total_supply_res, "gas" : gas_price_res, "timestamp":ct, "color":score_color }).execute()
         assert len(data.get("data", [])) > 0
+      
 
 main()
 #time.sleep(3)
