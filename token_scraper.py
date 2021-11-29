@@ -17,19 +17,11 @@ key: str = os.getenv("SUPABASE_SECRET_KEY")
 supabase: Client = create_client(url, key)
 
 
-#shitcoin list
-shitcoin_list = ['floki-inu', 'shiba-inu', 'saitama-inu']
+#SHITCOIN LIST
 listdata = supabase.table('coin_list').select('name').execute()
 
-print(listdata['data'])
 
-for h in listdata['data']:
-    for j in h:
-        print(h[j])
-
-
-
-#all the data being sent to database
+#SUPABASE FUNCTIONS
 
 #while True:
 def main():
@@ -47,6 +39,7 @@ def main():
                 f'https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress={coin_address_res}&apikey={ETHERSCAN_APIKEY}')
             total_supply_res = total_supply_req.json()['result']
 
+            #SOPR TRANSLATED INTO COLORS
             if 0 > coin_price_req[h[j]]['usd_24h_vol'] / coin_price_req[h[j]]['usd_24h_change']:
                 score_color = 'red'
             elif 0.5 < coin_price_req[h[j]]['usd_24h_vol'] / coin_price_req[h[j]]['usd_24h_change']:
@@ -56,6 +49,7 @@ def main():
                 score_color = 'yellow'
             ct = str(datetime.datetime.now())
             
+            #SUPABASE UPLOAD
             data = supabase.table("alts").insert({"name":h[j], "address" :coin_address_res, "info" : coin_price_req[h[j]], "supply":total_supply_res, "gas" : gas_price_res, "timestamp":ct, "color":score_color }).execute()
             assert len(data.get("data", [])) > 0
 
@@ -69,5 +63,3 @@ def main():
 main()
 #time.sleep(3)
 
-#manually input holders for more than 30 days
-#profit/ break even / loss
